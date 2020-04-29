@@ -5,6 +5,9 @@ from matplotlib.widgets import Button
 import numpy as np
 import cv2
 
+picture = cv2.imread("images/Handwritten2.jpg")
+picture = cv2.cvtColor(picture, cv2.COLOR_BGR2GRAY)
+
 image0 = cv2.imread("images/Zero.jpg")
 image1 = cv2.imread("images/One.jpg")
 image2 = cv2.imread("images/Two.jpg")
@@ -40,18 +43,36 @@ images = [{"Zero": image0}, {"One": image1}, {"Two": image2}, {"Three": image3},
          {"Eight": image8}, {"Nine": image9}]
 
 for i in range(len(images)):
-    for name, image in images[i].items():
-        comparison = ssim(image, images[i+1].value())
-        lst.append(comparison)
-        ax = fig.add_subplot(1, 10, i + 1)
-        ax.set_title(name)
-        plt.imshow(image, cmap = plt.cm.gray)
-        plt.axis("off")
+    name = images[i].keys()[0]
+    image = images[i].values()[0]
+    comparison = ssim(image, picture)
+    lst.append(comparison)
+
+name = ""
+highest = -2
+
+for i in range(len(lst)):
+    if lst[i] > highest:
+        highest = lst[i]
+        name = images[i].keys()[0]
+        image = images[i].values()[0]
+
+# show the image
+ax = fig.add_subplot(1, 2, 1)
+ax.set_title("Picture")
+plt.imshow(picture, cmap = plt.cm.gray)
+plt.axis("off")
+
+ax = fig.add_subplot(1, 2, 2)
+ax.set_title(name)
+plt.imshow(image, cmap = plt.cm.gray)
+plt.axis("off")
+
+print lst
+print name
+print highest
 
 plt.show()
-
-
-
 
 
 
