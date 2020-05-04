@@ -1,77 +1,72 @@
-from skimage.measure import compare_ssim as ssim
-from skimage import data, img_as_float
-import matplotlib.pyplot as plt
-from matplotlib.widgets import Button
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 import cv2
+from sklearn.tree import DecisionTreeClassifier
+from PIL import Image
 
-picture = cv2.imread("images/Handwritten2.jpg")
-picture = cv2.cvtColor(picture, cv2.COLOR_BGR2GRAY)
 
-image0 = cv2.imread("images/Zero.jpg")
-image1 = cv2.imread("images/One.jpg")
-image2 = cv2.imread("images/Two.jpg")
-image3 = cv2.imread("images/Three.jpg")
-image4 = cv2.imread("images/Four.jpg")
-image5 = cv2.imread("images/Five.jpg")
-image6 = cv2.imread("images/Six.jpg")
-image7 = cv2.imread("images/Seven.jpg")
-image8 = cv2.imread("images/Eight.jpg")
-image9 = cv2.imread("images/Nine.jpg")
-
-image0 = cv2.cvtColor(image0, cv2.COLOR_BGR2GRAY)
-image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-image3 = cv2.cvtColor(image3, cv2.COLOR_BGR2GRAY)
-image4 = cv2.cvtColor(image4, cv2.COLOR_BGR2GRAY)
-image5 = cv2.cvtColor(image5, cv2.COLOR_BGR2GRAY)
-image6 = cv2.cvtColor(image6, cv2.COLOR_BGR2GRAY)
-image7 = cv2.cvtColor(image7, cv2.COLOR_BGR2GRAY)
-image8 = cv2.cvtColor(image8, cv2.COLOR_BGR2GRAY)
-image9 = cv2.cvtColor(image9, cv2.COLOR_BGR2GRAY)
-
-#############################################################
-# MAIN CODE
-#############################################################
+im = cv2.imread("images/One2.jpg")
+im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
 lst = []
+im.resize((28, 28))
 
-fig = plt.figure("Images")
-
-images = [{"Zero": image0}, {"One": image1}, {"Two": image2}, {"Three": image3},\
-         {"Four": image4}, {"Five": image5}, {"Six": image6}, {"Seven": image7},\
-         {"Eight": image8}, {"Nine": image9}]
-
-for i in range(len(images)):
-    name = images[i].keys()[0]
-    image = images[i].values()[0]
-    comparison = ssim(image, picture)
-    lst.append(comparison)
-
-name = ""
-highest = -2
+for i in im:
+    for x in i:
+        lst.append(x)
 
 for i in range(len(lst)):
-    if lst[i] > highest:
-        highest = lst[i]
-        name = images[i].keys()[0]
-        image = images[i].values()[0]
+    if lst[i] > 128:
+        difference = lst[i] - 128
+        lst[i] -= ((2 * difference) + 5)
+    else:
+        difference = 128 - lst[i]
+        lst[i] += 2 * difference
 
-# show the image
-ax = fig.add_subplot(1, 2, 1)
-ax.set_title("Picture")
-plt.imshow(picture, cmap = plt.cm.gray)
-plt.axis("off")
+for i in range(len(lst)):
+    if lst[i] < 91:
+        lst[i] = 0
 
-ax = fig.add_subplot(1, 2, 2)
-ax.set_title(name)
-plt.imshow(image, cmap = plt.cm.gray)
-plt.axis("off")
 
-print lst
-print name
-print highest
 
+##for i in im:
+##    for x in i:
+##        if x < 80:
+##            x = 0
+##        lst.append(x)
+
+
+        
+
+##neighbors = []
+##for i in range(len(lst)):
+##    if i == 255:
+##        neighbors.append(i+1)
+##        neighbors.append(i-1)
+##        neighbors.append(i+2)
+##        neighbors.append(i-2)
+##for i in neighbors:
+##    lst[i] = 255
+        
+
+
+data = pd.read_csv("mnist_train.csv").as_matrix()
+clf = DecisionTreeClassifier()
+
+xtrain = data[0:60000, 1:]
+train_label = data[0:60000, 0]
+
+clf.fit(xtrain, train_label)
+
+##xtest = data[21000: ,1:]
+##actual_label = data[60000: ,0]
+#12
+d = np.array(lst)
+d.shape = (28,28)
+plt.imshow(d, cmap = "gray")
+prediction = clf.predict([lst])
+print prediction
 plt.show()
 
 
