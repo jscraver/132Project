@@ -68,10 +68,10 @@ class Picture(object):
         clf = DecisionTreeClassifier()
 
         # Creates the training set for the data
-        xtrain = data[0:30307, 1:]
+        xtrain = data[0:30807, 1:]
 
         # Gets the labels for each row in the data
-        train_label = data[0:30307, 0]
+        train_label = data[0:30807, 0]
 
         # Uses the desision tree classifier to machine learn using the training set along with the labels
         clf.fit(xtrain, train_label)
