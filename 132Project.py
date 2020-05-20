@@ -73,7 +73,7 @@ class Picture(object):
         # Gets the labels for each row in the data
         train_label = data[0:30807, 0]
 
-        # Uses the desision tree classifier to machine learn using the training set along with the labels
+        # Uses the decision tree classifier to machine learn using the training set along with the labels
         clf.fit(xtrain, train_label)
 
         # Uses the desision tree classifier to predict the value of the data.
